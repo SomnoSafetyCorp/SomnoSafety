@@ -23,11 +23,32 @@ void setup()
 {
   Serial.begin(9600);
   qtr.setTypeAnalog();
-  qtr.setSensorPins((const uint8_t[]) {A0}, SensorCount);
+  qtr.setSensorPins((const uint8_t[]) {
+    A0
+  }, SensorCount);
   pinMode(BuzzerPin, OUTPUT);
   pinMode(Button, INPUT);
   delay(500);
   pinMode(LED_BUILTIN, OUTPUT);
+  for (int t = 0; t < 20; t++)
+        {
+          digitalWrite(BuzzerPin, HIGH);
+          delay(1);
+          digitalWrite(BuzzerPin, LOW);
+          delay(1);
+        }
+        delay(50);
+        for (int t = 0; t < 20; t++)
+        {
+          digitalWrite(BuzzerPin, HIGH);
+          delay(1);
+          digitalWrite(BuzzerPin, LOW);
+          delay(1);
+        }
+  while (digitalRead(ButtonPin) == true)
+  {
+
+  }
   digitalWrite(LED_BUILTIN, HIGH);
   for (int t = 0; t < 50; t++)
   {
@@ -61,11 +82,12 @@ void loop()
   TempsActuel = millis();
   // Alerte régulière
   Diff2H = TempsActuel - Temps2H;
+  Serial.println(Diff2H);
   if (Alerte2H == false)
   {
     if (Diff2H > 7200000)
     {
-      for (int t = 0; t < 5; t++)
+      for (int t = 0; t < 15; t++)
       {
         for (int t = 0; t < 20; t++)
         {
@@ -83,6 +105,7 @@ void loop()
           delay(1);
         }
       }
+      Temps2H = millis();
       Alerte2H = true;
     }
     else
@@ -107,80 +130,82 @@ void loop()
             delay(1);
           }
         }
+        Temps2H = millis();
       }
-      Temps2H = millis();
+    
     }
-    // calibration toutes les 20 minutes
-    DiffCalib = TempsActuel - TempsCalib;
-    if (DiffCalib > 1198000)
+  }
+  // calibration toutes les 20 minutes
+  DiffCalib = TempsActuel - TempsCalib;
+  if (DiffCalib > 1198000)
+  {
+    for (int t = 0; t < 50; t++)
     {
-      for (int t = 0; t < 50; t++)
-      {
-        digitalWrite(BuzzerPin, HIGH);
-        delay(1);
-        digitalWrite(BuzzerPin, LOW);
-        delay(1);
-      }
-      for (uint16_t i = 0; i < 400; i++)
-      {
-        qtr.calibrate();
-      }
-      for (int t = 0; t < 100; t++)
-      {
-        digitalWrite(BuzzerPin, HIGH);
-        delay(1);
-        digitalWrite(BuzzerPin, LOW);
-        delay(1);
-      }
-      TempsCalib = millis();
+      digitalWrite(BuzzerPin, HIGH);
+      delay(1);
+      digitalWrite(BuzzerPin, LOW);
+      delay(1);
     }
-    // état de l'oeil
-    if (sensorValues[0] < 100)
+    for (uint16_t i = 0; i < 400; i++)
     {
-      if (FermeAvant == true)
+      qtr.calibrate();
+    }
+    for (int t = 0; t < 100; t++)
+    {
+      digitalWrite(BuzzerPin, HIGH);
+      delay(1);
+      digitalWrite(BuzzerPin, LOW);
+      delay(1);
+    }
+    TempsCalib = millis();
+  }
+  // état de l'oeil
+  if (sensorValues[0] < 100)
+  {
+    if (FermeAvant == true)
+    {
+      Diff = TempsActuel - TempsPrecedent;
+      if (Diff > 500)
       {
-        Diff = TempsActuel - TempsPrecedent;
-        if (Diff > 500)
-        {
-          Alarme = true;
-        }
-      }
-      else if (FermeAvant == false)
-      {
-        TempsPrecedent = TempsActuel;
-        FermeAvant = true;
+        Alarme = true;
       }
     }
-    else if (sensorValues[0] > 100)
+    else if (FermeAvant == false)
     {
-      if (FermeAvant == true)
-      {
-        TempsPrecedent = TempsActuel;
-        FermeAvant = false;
-      }
-      else if (FermeAvant == false)
-      {
-        Diff = TempsActuel - TempsPrecedent;
-        if (Diff > 10000)
-        {
-          Alarme = true;
-        }
-      }
+      TempsPrecedent = TempsActuel;
+      FermeAvant = true;
     }
-    // alerte
-    while (Alarme == true)
+  }
+  else if (sensorValues[0] > 100)
+  {
+    if (FermeAvant == true)
     {
-      if (Button == 0)
+      TempsPrecedent = TempsActuel;
+      FermeAvant = false;
+    }
+    else if (FermeAvant == false)
+    {
+      Diff = TempsActuel - TempsPrecedent;
+      if (Diff > 10000)
       {
-        Alarme = false;
-        TempsPrecedent = millis();
-      }
-      else
-      {
-        digitalWrite(BuzzerPin, HIGH);
-        delay(5);
-        digitalWrite(BuzzerPin, LOW);
-        delay(5);
+        Alarme = true;
       }
     }
   }
+  // alerte
+  while (Alarme == true)
+  {
+    if (digitalRead(ButtonPin) == false)
+    {
+      Alarme = false;
+      TempsPrecedent = millis();
+    }
+    else
+    {
+      digitalWrite(BuzzerPin, HIGH);
+      delay(5);
+      digitalWrite(BuzzerPin, LOW);
+      delay(5);
+    }
+  }
+}
