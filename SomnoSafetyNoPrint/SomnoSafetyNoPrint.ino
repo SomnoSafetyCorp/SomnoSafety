@@ -23,9 +23,7 @@ void setup()
 {
   Serial.begin(9600);
   qtr.setTypeAnalog();
-  qtr.setSensorPins((const uint8_t[]) {
-    A0
-  }, SensorCount);
+  qtr.setSensorPins((const uint8_t[]) {A0}, SensorCount);
   pinMode(BuzzerPin, OUTPUT);
   pinMode(Button, INPUT);
   delay(500);
@@ -82,7 +80,6 @@ void loop()
   TempsActuel = millis();
   // Alerte régulière
   Diff2H = TempsActuel - Temps2H;
-  Serial.println(Diff2H);
   if (Alerte2H == false)
   {
     if (Diff2H > 7200000)
