@@ -1,29 +1,27 @@
 #include <QTRSensors.h>
 QTRSensors qtr;
-
-bool FermeAvant = false;
-bool Alarme = false;
-bool Alerte2H = false;
-
-const int ButtonPin = 2;
 const int BuzzerPin = 3;
 int TempsPrecedent = 0;
 int TempsActuel = 0;
 int TempsCalib = 0;
 int Temps2H = 0;
+bool FermeAvant = false;
+bool Alarme = false;
+bool Alerte2H = false;
+const int ButtonPin = 2;
 int Diff = 0;
 int DiffCalib = 0;
 int Diff2H = 0;
 int Button = 0;
-
 const uint8_t SensorCount = 1;
 uint16_t sensorValues[SensorCount];
-
 void setup()
 {
   Serial.begin(9600);
   qtr.setTypeAnalog();
-  qtr.setSensorPins((const uint8_t[]) {A0}, SensorCount);
+  qtr.setSensorPins((const uint8_t[]) {
+    A0
+  }, SensorCount);
   pinMode(BuzzerPin, OUTPUT);
   pinMode(Button, INPUT);
   delay(500);
