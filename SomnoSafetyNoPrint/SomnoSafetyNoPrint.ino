@@ -23,26 +23,28 @@ void setup()
 {
   Serial.begin(9600);
   qtr.setTypeAnalog();
-  qtr.setSensorPins((const uint8_t[]) {A0}, SensorCount);
+  qtr.setSensorPins((const uint8_t[]) {
+    A0
+  }, SensorCount);
   pinMode(BuzzerPin, OUTPUT);
   pinMode(Button, INPUT);
   delay(500);
   pinMode(LED_BUILTIN, OUTPUT);
   for (int t = 0; t < 20; t++)
-        {
-          digitalWrite(BuzzerPin, HIGH);
-          delay(1);
-          digitalWrite(BuzzerPin, LOW);
-          delay(1);
-        }
-        delay(50);
-        for (int t = 0; t < 20; t++)
-        {
-          digitalWrite(BuzzerPin, HIGH);
-          delay(1);
-          digitalWrite(BuzzerPin, LOW);
-          delay(1);
-        }
+  {
+    digitalWrite(BuzzerPin, HIGH);
+    delay(1);
+    digitalWrite(BuzzerPin, LOW);
+    delay(1);
+  }
+  delay(50);
+  for (int t = 0; t < 20; t++)
+  {
+    digitalWrite(BuzzerPin, HIGH);
+    delay(1);
+    digitalWrite(BuzzerPin, LOW);
+    delay(1);
+  }
   while (digitalRead(ButtonPin) == true)
   {
 
@@ -129,7 +131,7 @@ void loop()
         }
         Temps2H = millis();
       }
-    
+
     }
   }
   // calibration toutes les 20 minutes
@@ -195,6 +197,24 @@ void loop()
     if (digitalRead(ButtonPin) == false)
     {
       Alarme = false;
+      for (int t = 0; t < 50; t++)
+      {
+        digitalWrite(BuzzerPin, HIGH);
+        delay(1);
+        digitalWrite(BuzzerPin, LOW);
+        delay(1);
+      }
+      for (uint16_t i = 0; i < 400; i++)
+      {
+        qtr.calibrate();
+      }
+      for (int t = 0; t < 100; t++)
+      {
+        digitalWrite(BuzzerPin, HIGH);
+        delay(1);
+        digitalWrite(BuzzerPin, LOW);
+        delay(1);
+      }
       TempsPrecedent = millis();
     }
     else
